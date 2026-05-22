@@ -1,0 +1,12 @@
+{
+  "name": "bitheroes-guild-tools",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "contribution": "node cli.js contribution"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0"
+  }
+}
