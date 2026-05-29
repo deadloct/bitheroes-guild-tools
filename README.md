@@ -13,6 +13,17 @@ npm install
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
+Optionally, create a gitignored `.env.local` to flag NFT heroes (separate diff table, own ranking) and set weekly contribution colour thresholds:
+
+```sh
+# .env.local
+NFT_HEROES=Hero1,Hero2,Hero3
+CONTRIBUTION_GREEN_THRESHOLD=500000   # weekly >= this is green
+CONTRIBUTION_YELLOW_THRESHOLD=250000  # weekly >= this is yellow; below is red
+```
+
+Names are matched case-insensitively against the leaderboard. Heroes not listed are treated as basic. Threshold defaults are 500k / 250k. Colour is auto-disabled when output is not a TTY or when `NO_COLOR` is set. Process environment takes precedence over `.env.local`.
+
 ## Workflow
 
 1. Drop one or more leaderboard screenshots into [screenshots/](screenshots/). Multiple paginated screenshots of the same leaderboard are fine — members appearing in more than one are deduplicated.
@@ -26,7 +37,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
    ```sh
    npm run contribution diff
    ```
-   Prints a ranked list of weekly gains, plus new and departed members.
+   Prints a ranked list of weekly gains, plus new and departed members. Rows under the green threshold are tagged with `(under reqs: Nw)` — the number of consecutive weeks (including this one) the player's weekly delta has stayed below green. Computed by walking back through history files only as far as needed.
 5. Archive the processed screenshots:
    ```sh
    npm run contribution archive
