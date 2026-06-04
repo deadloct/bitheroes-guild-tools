@@ -60,6 +60,28 @@ export function renderDiff(
   return lines.join("\n");
 }
 
+export function renderLeaderboard(
+  diff,
+  { isNft = () => false, colorize = noopColorize, streaks = new Map(), threshold = 0, top = 10 } = {},
+) {
+  const header = `Leaderboard: ${diff.previous.date} -> ${diff.current.date}`;
+  const lines = [header, "=".repeat(header.length)];
+
+  const qualifying = diff.changes.filter((c) => c.weekly >= threshold);
+  const basic = qualifying.filter((c) => !isNft(c.name)).slice(0, top);
+  const nft = qualifying.filter((c) => isNft(c.name)).slice(0, top);
+
+  lines.push("", `Basic heroes (${basic.length}):`);
+  if (basic.length > 0) appendRankedChanges(lines, basic, colorize, streaks);
+  else lines.push("  (none)");
+
+  lines.push("", `NFT heroes (${nft.length}):`);
+  if (nft.length > 0) appendRankedChanges(lines, nft, colorize, streaks);
+  else lines.push("  (none)");
+
+  return lines.join("\n");
+}
+
 export function renderWeekRecord(week, { isNft = () => false } = {}) {
   const basic = week.members.filter((m) => !isNft(m.name));
   const nft = week.members.filter((m) => isNft(m.name));

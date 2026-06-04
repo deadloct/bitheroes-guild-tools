@@ -38,7 +38,12 @@ Names are matched case-insensitively against the leaderboard. Heroes not listed 
    npm run contribution diff
    ```
    Prints a ranked list of weekly gains, plus new and departed members. Rows under the green threshold are tagged with `(under reqs: Nw)` — the number of consecutive weeks (including this one) the player's weekly delta has stayed below green. Computed by walking back through history files only as far as needed.
-5. Archive the processed screenshots:
+5. Or show just the weekly leaderboard:
+   ```sh
+   npm run contribution leaderboard
+   ```
+   Like `diff`, but trimmed to the top 10 weekly contributors in each of the basic and NFT categories, with anyone whose weekly delta fell below the green threshold (under requirements) omitted.
+6. Archive the processed screenshots:
    ```sh
    npm run contribution archive
    ```
@@ -50,6 +55,7 @@ Names are matched case-insensitively against the leaderboard. Heroes not listed 
 | --- | --- |
 | `npm run contribution extract` | OCR screenshots/ via Claude, write history/YYYY-MM-DD.json |
 | `npm run contribution diff` | Compute diff between the latest two history files |
+| `npm run contribution leaderboard` | Show the top 10 weekly contributors (basic and NFT) that met requirements |
 | `npm run contribution archive` | Move processed screenshots into screenshots/processed/YYYY-MM-DD/ |
 
 ## Layout
