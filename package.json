@@ -7,6 +7,6 @@
     "contribution": "node cli.js contribution"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.88.0"
+    "@anthropic-ai/sdk": "^0.104.2"
   }
 }
