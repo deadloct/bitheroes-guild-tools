@@ -13,16 +13,17 @@ npm install
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Optionally, create a gitignored `.env.local` to flag NFT heroes (separate diff table, own ranking) and set weekly contribution colour thresholds:
+Optionally, create a gitignored `.env.local` to flag NFT heroes (separate diff table, own ranking), ignore specific heroes, and set weekly contribution colour thresholds:
 
 ```sh
 # .env.local
 NFT_HEROES=Hero1,Hero2,Hero3
+IGNORE_HEROES=AltAccount,TestUser
 CONTRIBUTION_GREEN_THRESHOLD=500000   # weekly >= this is green
 CONTRIBUTION_YELLOW_THRESHOLD=250000  # weekly >= this is yellow; below is red
 ```
 
-Names are matched case-insensitively against the leaderboard. Heroes not listed are treated as basic. Threshold defaults are 500k / 250k. Colour is auto-disabled when output is not a TTY or when `NO_COLOR` is set. Process environment takes precedence over `.env.local`.
+Names are matched case-insensitively against the leaderboard. Heroes not listed in `NFT_HEROES` are treated as basic. Ignored heroes (`IGNORE_HEROES` / `IGNORE_MEMBERS`) are excluded from extraction and calculations. Threshold defaults are 500k / 250k. Colour is auto-disabled when output is not a TTY or when `NO_COLOR` is set. Process environment takes precedence over `.env.local`.
 
 ## Workflow
 

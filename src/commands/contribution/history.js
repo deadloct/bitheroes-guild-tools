@@ -17,8 +17,9 @@ export class WeekRecord {
 }
 
 export class HistoryStore {
-  constructor(dir) {
+  constructor(dir, { isIgnored = () => false } = {}) {
     this.dir = dir;
+    this.isIgnored = isIgnored;
   }
 
   write(date, members) {
@@ -40,7 +41,8 @@ export class HistoryStore {
 
   load(dateStr) {
     const filePath = path.join(this.dir, `${dateStr}.json`);
-    const members = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const rawMembers = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const members = rawMembers.filter((m) => !this.isIgnored(m.name));
     return new WeekRecord(dateStr, members);
   }
 

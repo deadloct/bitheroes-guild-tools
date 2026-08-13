@@ -2,6 +2,7 @@ import { Command } from "../../../cli/command.js";
 import { makeColorizer } from "../colors.js";
 import { WeekDiff } from "../diff.js";
 import { HistoryStore } from "../history.js";
+import { loadIgnoredHeroes, makeIsIgnored as makeIsIgnoredHero } from "../ignoreHeroes.js";
 import { loadNftHeroes, makeIsNft } from "../nftHeroes.js";
 import { HISTORY_DIR } from "../paths.js";
 import { renderLeaderboard } from "../render.js";
@@ -13,7 +14,8 @@ export class LeaderboardSubcommand extends Command {
   description = "Show the top 10 weekly contributors (basic and NFT) that met requirements";
 
   async run() {
-    const store = new HistoryStore(HISTORY_DIR);
+    const isIgnored = makeIsIgnoredHero(loadIgnoredHeroes());
+    const store = new HistoryStore(HISTORY_DIR, { isIgnored });
     const weeks = store.loadLatest(2);
     const isNft = makeIsNft(loadNftHeroes());
     const thresholds = loadThresholds();
@@ -29,6 +31,7 @@ export class LeaderboardSubcommand extends Command {
     console.log(
       renderLeaderboard(new WeekDiff(previous, current), {
         isNft,
+        isIgnored,
         colorize,
         streaks,
         threshold: thresholds.green,

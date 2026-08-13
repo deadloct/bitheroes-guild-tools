@@ -42,12 +42,12 @@ function mergeNewMembers(diff) {
 
 export function renderDiff(
   diff,
-  { isNft = () => false, colorize = noopColorize, streaks = new Map() } = {},
+  { isNft = () => false, isIgnored = () => false, colorize = noopColorize, streaks = new Map() } = {},
 ) {
   const header = `Weekly contribution: ${diff.previous.date} -> ${diff.current.date}`;
   const lines = [header, "=".repeat(header.length)];
 
-  const allChanges = mergeNewMembers(diff);
+  const allChanges = mergeNewMembers(diff).filter((c) => !isIgnored(c.name));
 
   const basicChanges = allChanges.filter((c) => !isNft(c.name));
   const nftChanges = allChanges.filter((c) => isNft(c.name));
@@ -60,9 +60,10 @@ export function renderDiff(
   if (nftChanges.length > 0) appendRankedChanges(lines, nftChanges, colorize, streaks);
   else lines.push("  (none)");
 
-  if (diff.departed.length > 0) {
+  const departed = diff.departed.filter((m) => !isIgnored(m.name));
+  if (departed.length > 0) {
     lines.push("", "Members in previous week but not current:");
-    for (const m of diff.departed) {
+    for (const m of departed) {
       const label = isNft(m.name) ? " [NFT]" : "";
       lines.push(`  - ${m.name}${label}`);
     }
@@ -72,12 +73,14 @@ export function renderDiff(
 
 export function renderLeaderboard(
   diff,
-  { isNft = () => false, colorize = noopColorize, streaks = new Map(), threshold = 0, top = 10 } = {},
+  { isNft = () => false, isIgnored = () => false, colorize = noopColorize, streaks = new Map(), threshold = 0, top = 10 } = {},
 ) {
   const header = `Leaderboard: ${diff.previous.date} -> ${diff.current.date}`;
   const lines = [header, "=".repeat(header.length)];
 
-  const qualifying = mergeNewMembers(diff).filter((c) => c.weekly >= threshold);
+  const qualifying = mergeNewMembers(diff)
+    .filter((c) => !isIgnored(c.name))
+    .filter((c) => c.weekly >= threshold);
   const basic = qualifying.filter((c) => !isNft(c.name)).slice(0, top);
   const nft = qualifying.filter((c) => isNft(c.name)).slice(0, top);
 
@@ -92,10 +95,11 @@ export function renderLeaderboard(
   return lines.join("\n");
 }
 
-export function renderWeekRecord(week, { isNft = () => false } = {}) {
-  const basic = week.members.filter((m) => !isNft(m.name));
-  const nft = week.members.filter((m) => isNft(m.name));
-  const lines = [`Current totals (${week.members.length} members):`];
+export function renderWeekRecord(week, { isNft = () => false, isIgnored = () => false } = {}) {
+  const activeMembers = week.members.filter((m) => !isIgnored(m.name));
+  const basic = activeMembers.filter((m) => !isNft(m.name));
+  const nft = activeMembers.filter((m) => isNft(m.name));
+  const lines = [`Current totals (${activeMembers.length} members):`];
 
   lines.push("", `Basic heroes (${basic.length}):`);
   if (basic.length > 0) appendRankedMembers(lines, basic);
